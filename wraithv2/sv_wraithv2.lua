@@ -94,7 +94,6 @@ if pluginConfig.enabled then
                     if data ~= nil and data.vehicleRegistrations ~= nil then
                         local reg = false
                         for _, veh in pairs(data.vehicleRegistrations) do
-                            print(("check %s = %s ?"):format(veh.plate, plate))
                             if veh.vehicle.plate == plate then
                                 reg = veh
                                 break
