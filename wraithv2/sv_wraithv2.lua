@@ -33,6 +33,11 @@ if pluginConfig.enabled then
                 plate = plate:gsub("%s+", "")
                 wraithLastPlates.locked = { cam = cam, plate = plate, index = index, vehicle = cam.vehicle }
                 cadPlateLookup(plate, false, function(data)
+                    if cam == "front" then
+                        camCapitalized = "Front"
+                    elseif cam == "rear" then
+                        camCapitalized = "Rear"
+                    end
                     if data == nil or data.vehicleRegistrations == nil then
                         debugLog("No data returned")
                         return
@@ -51,9 +56,8 @@ if pluginConfig.enabled then
                         local status = reg.status
                         local expires = (reg.expiration and pluginConfig.useExpires) and ("Expires: %s<br/>"):format(reg.expiration) or ""
                         local owner = pluginConfig.useMiddleInitial and ("%s %s, %s"):format(reg.person.first, reg.person.last, reg.person.mi) or ("%s %s"):format(reg.person.first, reg.person.last)
-                        
                         TriggerClientEvent("pNotify:SendNotification", source, {
-                            text = ("<b style='color:yellow'>"..cam.." ALPR</b><br/>Plate: %s<br/>Status: %s<br/>%sOwner: %s"):format(plate, status, expires, owner),
+                            text = ("<b style='color:yellow'>"..camCapitalized.." ALPR</b><br/>Plate: %s<br/>Status: %s<br/>%sOwner: %s"):format(plate:upper(), status, expires, owner),
                             type = "success",
                             queue = "alpr",
                             timeout = 30000,
@@ -63,7 +67,7 @@ if pluginConfig.enabled then
                             if bolos[1].flags then
                                 local flags = table.concat(bolos[1].flags, ",")
                                 TriggerClientEvent("pNotify:SendNotification", source, {
-                                    text = ("<b style='color:red'>BOLO ALERT!<br/>Plate: %s<br/>Flags: %s"):format(reg.vehicle.plate, flags),
+                                    text = ("<b style='color:red'>BOLO ALERT!<br/>Plate: %s<br/>Flags: %s"):format(reg.vehicle.plate:upper(), flags),
                                     type = "error",
                                     queue = "bolo",
                                     timeout = 20000,
@@ -73,7 +77,7 @@ if pluginConfig.enabled then
                         end
                     else
                         TriggerClientEvent("pNotify:SendNotification", source, {
-                            text = "<b style='color:yellow'>"..cam.." ALPR</b><br/>Plate: "..plate.."<br/>Status: Not Registered",
+                            text = "<b style='color:yellow'>"..camCapitalized.." ALPR</b><br/>Plate: "..plate:upper().."<br/>Status: Not Registered",
                             type = "error",
                             queue = "alpr",
                             timeout = 15000,
@@ -85,6 +89,11 @@ if pluginConfig.enabled then
 
             RegisterNetEvent("wk:onPlateScanned")
             AddEventHandler("wk:onPlateScanned", function(cam, plate, index)
+                if cam == "front" then
+                    camCapitalized = "Front"
+                elseif cam == "rear" then
+                    camCapitalized = "Rear"
+                end
                 debugLog(("plate scan: %s - %s - %s"):format(cam, plate, index))
                 local source = source
                 plate = plate:gsub("%s+", "")
@@ -107,7 +116,7 @@ if pluginConfig.enabled then
                             local owner = pluginConfig.useMiddleInitial and ("%s %s, %s"):format(reg.person.first, reg.person.last, reg.person.mi) or ("%s %s"):format(reg.person.first, reg.person.last)
                             if status ~= "VALID" then
                                 TriggerClientEvent("pNotify:SendNotification", source, {
-                                    text = ("<b style='color:yellow'>"..cam.." ALPR</b><br/>Plate: %s<br/>Status: %s<br/>%sOwner: %s"):format(plate, status, expires, owner),
+                                    text = ("<b style='color:yellow'>"..camCapitalized.." ALPR</b><br/>Plate: %s<br/>Status: %s<br/>%sOwner: %s"):format(plate:upper(), status, expires, owner),
                                     type = "success",
                                     queue = "alpr",
                                     timeout = 30000,
@@ -116,7 +125,7 @@ if pluginConfig.enabled then
                             end
                         else
                             TriggerClientEvent("pNotify:SendNotification", source, {
-                                text = "<b style='color:yellow'>"..cam.." ALPR</b><br/>Plate: "..plate.."<br/>Status: Not Registered",
+                                text = "<b style='color:yellow'>"..camCapitalized.." ALPR</b><br/>Plate: "..plate:upper().."<br/>Status: Not Registered",
                                 type = "error",
                                 queue = "alpr",
                                 timeout = 15000,
