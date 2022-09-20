@@ -38,7 +38,10 @@ if pluginConfig.enabled then
             end
             if #vehData < 1 then
                 debugLog("No data returned")
-                return
+                if pluginConfig.scanAi then
+                else
+                    return
+                end
             end
             local reg = false
             for _, veh in pairs(vehData) do
@@ -49,7 +52,10 @@ if pluginConfig.enabled then
             end
             if #charData < 1 then
                 debugLog("Invalid registration")
-                return
+                if pluginConfig.scanAi then
+                else
+                    return
+                end
             end
             local person = charData[1]
             if reg then
@@ -57,15 +63,24 @@ if pluginConfig.enabled then
                 local plate = reg.plate
                 if regData == nil then
                     debugLog("regData is nil, skipping plate lock.")
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 if regData[1] == nil then
                     debugLog("regData is empty, skipping")
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 if regData[1].status == nil then
                     warnLog(("Plate %s was scanned by %s, but status was nil. Record: %s"):format(plate, source, json.encode(regData[1])))
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 local plate = reg.plate
                 local statusUid = pluginConfig.statusUid ~= nil and pluginConfig.statusUid or "status"
@@ -136,15 +151,24 @@ if pluginConfig.enabled then
                 local plate = reg.plate
                 if regData == nil then
                     debugLog("regData is nil, skipping plate lock.")
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 if regData[1] == nil then
                     debugLog("regData is empty, skipping")
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 if regData[1].status == nil then
                     warnLog(("Plate %s was scanned by %s, but status was nil. Record: %s"):format(plate, source, json.encode(regData[1])))
-                    return
+                    if pluginConfig.scanAi then
+                    else
+                        return
+                    end
                 end
                 local statusUid = pluginConfig.statusUid ~= nil and pluginConfig.statusUid or "status"
                 local expiresUid = pluginConfig.expiresUid ~= nil and pluginConfig.expiresUid or "expiration"

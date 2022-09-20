@@ -12,16 +12,18 @@ local config = {
     configVersion = "1.5"
 
     -- use vehicle registration expirations, or not
-    ,useExpires = true 
+    ,useExpires = true
      -- use middle initials?
     ,useMiddleInitial = true
     -- alert if no registration was found on scan?
-    ,alertNoRegistration = true 
+    ,alertNoRegistration = true
     -- if your custom vehicle record is different, change the below
     ,statusUid = "status"
     ,expiresUid = "expiration"
     -- statuses to flag on when scanned
     ,flagOnStatuses = {"STOLEN", "EXPIRED", "PENDING", "SUSPENDED"}
+    -- Scan AI plates
+    ,scanAi = false
 }
 
 if config.enabled then
