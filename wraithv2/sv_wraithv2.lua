@@ -24,8 +24,8 @@ if pluginConfig.enabled then
     exports('cadGetLastPlates', function() return wraithLastPlates end)
 
     RegisterNetEvent("wk:onPlateLocked")
-    AddEventHandler("wk:onPlateLocked", function(cam, plate, index)
-        debugLog(("plate lock: %s - %s - %s"):format(cam, plate, index))
+    AddEventHandler("wk:onPlateLocked", function(cam, plate, index, cbType, returnEvent)
+        debugLog(("plate lock: %s - %s - %s - %s - %s"):format(cam, plate, index, cbType, returnEvent))
         local source = source
         local ids = GetIdentifiers(source)
         plate = plate:match("^%s*(.-)%s*$")
@@ -36,12 +36,18 @@ if pluginConfig.enabled then
             elseif cam == "rear" then
                 camCapitalized = "Rear"
             end
+            if returnEvent ~= nil then
+                if cbType == 'client' then
+                    TriggerClientEvent(returnEvent, source, {['regData'] = regData, ['vehData']= vehData, ['charData'] = charData, ['boloData'] = boloData, ['plate'] = plate, ['cam'] = cam, ['index'] = index})
+                elseif cbType == 'server' then
+                    TriggerServerEvent(returnEvent, source, {['regData'] = regData, ['vehData']= vehData, ['charData'] = charData, ['boloData'] = boloData, ['plate'] = plate, ['cam'] = cam, ['index'] = index})
+                else
+                    warnLog('The provided cbType for wk:wk:onPlateLocked was invalid!')
+                end
+            end
             if #vehData < 1 then
                 debugLog("No data returned")
-                if pluginConfig.scanAi then
-                else
-                    return
-                end
+                return
             end
             local reg = false
             for _, veh in pairs(vehData) do
@@ -52,10 +58,7 @@ if pluginConfig.enabled then
             end
             if #charData < 1 then
                 debugLog("Invalid registration")
-                if pluginConfig.scanAi then
-                else
                     return
-                end
             end
             local person = charData[1]
             if reg then
@@ -63,24 +66,15 @@ if pluginConfig.enabled then
                 local plate = reg.plate
                 if regData == nil then
                     debugLog("regData is nil, skipping plate lock.")
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 if regData[1] == nil then
                     debugLog("regData is empty, skipping")
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 if regData[1].status == nil then
                     warnLog(("Plate %s was scanned by %s, but status was nil. Record: %s"):format(plate, source, json.encode(regData[1])))
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 local plate = reg.plate
                 local statusUid = pluginConfig.statusUid ~= nil and pluginConfig.statusUid or "status"
@@ -118,18 +112,27 @@ if pluginConfig.enabled then
     end)
 
     RegisterNetEvent("wk:onPlateScanned")
-    AddEventHandler("wk:onPlateScanned", function(cam, plate, index)
+    AddEventHandler("wk:onPlateScanned", function(cam, plate, index, cbType, returnEvent)
         if cam == "front" then
             camCapitalized = "Front"
         elseif cam == "rear" then
             camCapitalized = "Rear"
         end
-        debugLog(("plate scan: %s - %s - %s"):format(cam, plate, index))
+        debugLog(("plate scan: %s - %s - %s - %s - %s"):format(cam, plate, index, cbType, returnEvent))
         local source = source
         plate = plate:match("^%s*(.-)%s*$")
         wraithLastPlates.scanned = { cam = cam, plate = plate, index = index, vehicle = cam.vehicle }
         TriggerEvent("SonoranCAD::wraithv2:PlateScanned", source, reg, cam, plate, index)
         cadGetInformation(plate, function(regData, vehData, charData, boloData)
+            if returnEvent ~= nil then
+                if cbType == 'client' then
+                    TriggerClientEvent(returnEvent, source, {['regData'] = regData, ['vehData']= vehData, ['charData'] = charData, ['boloData'] = boloData, ['plate'] = plate, ['cam'] = cam, ['index'] = index})
+                elseif cbType == 'server' then
+                    TriggerServerEvent(returnEvent, source, {['regData'] = regData, ['vehData']= vehData, ['charData'] = charData, ['boloData'] = boloData, ['plate'] = plate, ['cam'] = cam, ['index'] = index})
+                else
+                    warnLog('The provided cbType for wk:wk:onPlateLocked was invalid!')
+                end
+            end
             if cam == "front" then
                 camCapitalized = "Front"
             elseif cam == "rear" then
@@ -151,24 +154,15 @@ if pluginConfig.enabled then
                 local plate = reg.plate
                 if regData == nil then
                     debugLog("regData is nil, skipping plate lock.")
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 if regData[1] == nil then
                     debugLog("regData is empty, skipping")
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 if regData[1].status == nil then
                     warnLog(("Plate %s was scanned by %s, but status was nil. Record: %s"):format(plate, source, json.encode(regData[1])))
-                    if pluginConfig.scanAi then
-                    else
                         return
-                    end
                 end
                 local statusUid = pluginConfig.statusUid ~= nil and pluginConfig.statusUid or "status"
                 local expiresUid = pluginConfig.expiresUid ~= nil and pluginConfig.expiresUid or "expiration"

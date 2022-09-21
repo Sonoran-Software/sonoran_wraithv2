@@ -22,8 +22,6 @@ local config = {
     ,expiresUid = "expiration"
     -- statuses to flag on when scanned
     ,flagOnStatuses = {"STOLEN", "EXPIRED", "PENDING", "SUSPENDED"}
-    -- Scan AI plates
-    ,scanAi = false
 }
 
 if config.enabled then
