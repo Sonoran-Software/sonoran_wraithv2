@@ -22,6 +22,8 @@ local config = {
     ,expiresUid = "expiration"
     -- statuses to flag on when scanned
     ,flagOnStatuses = {"STOLEN", "EXPIRED", "PENDING", "SUSPENDED"}
+    -- Vehicle classes that will NOT get ran through CAD
+    ,vehTypeFilter = { 13, 14, 15, 16, 21, 22 }
 }
 
 if config.enabled then
