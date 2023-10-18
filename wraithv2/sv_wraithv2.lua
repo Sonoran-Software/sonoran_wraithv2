@@ -33,12 +33,7 @@ if pluginConfig.enabled then
 	end
 
 	RegisterNetEvent('wk:onPlateLocked')
-	AddEventHandler('wk:onPlateLocked', function(cam, plate, index, cbType, returnEvent)
-        local vehicleClass = tonumber(vehicle.class)
-		if isInArray(pluginConfig.vehTypeFilter, vehicleClass) then
-			debugLog(('Vehicle type %s is filtered, skipping plate scan'):format(vehicleClass))
-			return
-		end
+	AddEventHandler('wk:onPlateLocked', function(cam, plate, index, vehicle, cbType, returnEvent)
 		debugLog(('plate lock: %s - %s - %s - %s - %s'):format(cam, plate, index, cbType, returnEvent))
 		local source = source
 		local ids = GetIdentifiers(source)
