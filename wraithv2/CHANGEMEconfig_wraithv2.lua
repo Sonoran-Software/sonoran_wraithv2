@@ -22,7 +22,7 @@ local config = {
     ,expiresUid = "expiration"
     -- statuses to flag on when scanned
     ,flagOnStatuses = {"STOLEN", "EXPIRED", "PENDING", "SUSPENDED"}
-    -- Vehicle classes that will NOT get ran through CAD
+    -- Vehicle classes that will NOT get ran through CAD | Classes: https://docs.fivem.net/natives/?_0x29439776AAA00A62
     ,vehTypeFilter = { 13, 14, 15, 16, 21, 22 }
 }
 
